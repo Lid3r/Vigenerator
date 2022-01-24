@@ -47,6 +47,7 @@ int main(int argc, char* argv[]) {
             //Fail fast principle, check if operation is a correct flag
             if (!op) {
                 cout << "Invalid operation flags! Known flags: --en --de";
+                return 1;
             }
 
 
