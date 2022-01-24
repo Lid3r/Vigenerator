@@ -8,7 +8,14 @@ using namespace std;
 
 int start_prog(int argc) {
     if (argc == 1) { 
-        cout << "PROGRAM INFO GOES HERE" << endl;
+        cout << "This program encrypts or decrypts text files using the Vigenere cipher method." << endl;
+        cout << "It accepts the following flags:" << endl;
+        cout << "--en: encode flag" << endl;
+        cout << "--de: decode flag" << endl;
+        cout << "-i: input file name" << endl;
+        cout << "-o: output file name" << endl;
+        cout << "-k: key file name" << endl;
+        cout << "Example command:" << endl << "Vigenerator.exe --en -i Input.txt -k Key.txt -o Out.txt";
         return 1;
     }
 
