@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <queue>
 
 using namespace std;
 /**@file Header.h*/
@@ -16,27 +17,30 @@ int start_prog(int argc);
 /**Delete forbidden characters from a string.
 * The function takes the string and character by character checks for non-alphabets. If found, it saves the position and character into a vector and then passes that character. It returns a new string without forbidden characters.
 * @param base string with possibly forbidden characters
-* @param mistakes[] vector of a pair of int (position of the character in the string) and char (the forbidden character)
+* @param mistakes vector of a pair of int (position of the character in the string) and char (the forbidden character)
 * @param ignore boolean value, used to ignore (true) saving the forbidden characters of the key, as they will not be used anywhere later, or force (false) the function to save them
 */
-string fix_strings(string base, vector<pair<int, char>> mistakes[], bool ignore);
+string fix_strings(string base, vector<pair<int, char>>& mistakes, bool ignore);
 
 
 /**Return characters that were deleted using the fix_strings function.
 * Function takes an encoded string and adress of a vector containing information about the deleted characters
 * @remark Function uses an overload of std::string.insert() to insert only one character
 * @param toFix a string to have returned it's forbidden characters
-* @param mistakes[] vector of a pair of int (position of the character in the string) and char (the forbidden character)
+* @param mistakes vector of a pair of int (position of the character in the string) and char (the forbidden character)
+* @param newlines queue of ints which are the length of each line in source file, used to return the original appearance of the file contents
 */
-string unfix_strings(string toFix, vector<pair<int, char>> mistakes[]);
+string unfix_strings(string toFix, vector<pair<int, char>>& mistakes, queue<int>& newlines);
 
 
 
 /**Read contents from file.
 * Function takes a string and tries to open a file which name is that string. If it succeeds, it reads it line by line and accumulates it in a string which it returns at the end
 * @param filename name of the file which has to be opened and read
+* @param newlines queue of ints which are the length of each line in source file, used to return the original appearance of the file contents
+* @param ignore boolean value, used to ignore (true) saving the newlines of the key, as they will not be used anywhere later, or force (false) the function to save them
 */
-string read_file(string filename);
+string read_file(string filename, queue<int>&newlines, bool ignore);
 
 
 /**Write a string to file.

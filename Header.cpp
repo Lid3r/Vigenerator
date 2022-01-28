@@ -27,7 +27,7 @@ int start_prog(int argc) {
     return 0;
 }
 
-string read_file(string filename) {
+string read_file(string filename, queue<int>&newlines, bool ignore) {
     ifstream current_file;
     string contents = "";
     string line = "";
@@ -38,16 +38,25 @@ string read_file(string filename) {
         cout << "Source file \"" << filename << "\" could not be opened!" << endl;
     }
     else {
-        contents = "";
-        while (getline(current_file, line)) {
-            contents += line;
+        if (ignore) { //ignore key newlines
+            contents = "";
+            while (getline(current_file, line)) {
+                contents += line;               
+            }
+        }
+        else {
+            contents = "";
+            while (getline(current_file, line)) {
+                contents += line;
+                newlines.push(int(line.length()));
+            }
         }
     }
     current_file.close();
     return contents;
 }
 
-string fix_strings(string base, vector<pair<int, char>> mistakes[], bool ignore) {
+string fix_strings(string base, vector<pair<int, char>> &mistakes, bool ignore) {
     int iterator = 0;
     string output;
     //Ignore for key file
@@ -72,7 +81,7 @@ string fix_strings(string base, vector<pair<int, char>> mistakes[], bool ignore)
                 iterator++;
             }
             else {
-                mistakes->push_back({ iterator, base[iterator] });
+                mistakes.push_back({ iterator, base[iterator] });
                 iterator++;
                 continue;
             }
@@ -82,11 +91,30 @@ string fix_strings(string base, vector<pair<int, char>> mistakes[], bool ignore)
     return output;
 }
 
-string unfix_strings(string toFix, vector<pair<int, char>> mistakes[]) {
+string unfix_strings(string toFix, vector<pair<int, char>>& mistakes, queue<int>& newlines) {
     vector<pair<int, char>>::iterator it;
-    for (it = mistakes->begin(); it != mistakes->end(); it++) {
+    vector<int>::iterator nl;
+    int test=0;
+    //return previous characters
+    for (it = mistakes.begin(); it != mistakes.end(); it++) {
         toFix.insert(it->first, 1, it->second); //Overload to accept single char
     }
+    
+    //return newlines
+    int pos = 0;
+    int corr = 0;
+    int size = newlines.size() - 1;
+
+    while (size>0) {     
+        pos += newlines.front() + corr;
+        corr = 1; //Correction for additional character in \n
+        toFix.insert(pos, "\n");
+        newlines.pop();        
+        size--;
+    }
+        
+    
+    
     return toFix;
 }
 
@@ -97,7 +125,7 @@ void write_file(string filename, string contents) {
         cout << "File \"" << filename << "\" could not be created or opened!" << endl;
     }
     else {
-        outfile << contents << endl;
+        outfile << contents;
     }
     outfile.close();
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <queue>
 #include <map>
 #include "Header.h"
 using namespace std;
@@ -8,9 +9,11 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
+
+
     map<string, string> argmap;
     vector<pair<int, char>> mistakes;
-
+    queue<int> newlines;
     bool op = false;
 
     argmap["-i"] = "";
@@ -50,8 +53,8 @@ int main(int argc, char* argv[]) {
             }
 
 
-            key = fix_strings(read_file(argmap["-k"]), &mistakes, true);
-            plaintext = fix_strings(read_file(argmap["-i"]), &mistakes, false);
+            key = fix_strings(read_file(argmap["-k"], newlines, true), mistakes, true);
+            plaintext = fix_strings(read_file(argmap["-i"], newlines, false), mistakes, false);
 
             //Protect from user who didn't read documentation, avoid infinite loop
             if (key == "") {
@@ -67,14 +70,14 @@ int main(int argc, char* argv[]) {
 
 
             if (argmap["op"] == "--en") {
-                cypher = unfix_strings(encode(plaintext, key), &mistakes);
+                cypher = unfix_strings(encode(plaintext, key), mistakes, newlines);
                 write_file(argmap["-o"], cypher);
                 cout << "Successfuly encoded file \"" << argmap["-i"] << "\"!";
             }
 
             else { //argmap["op"] == "--de"
                 cypher = plaintext;
-                original_text = unfix_strings(decode(cypher, key), &mistakes);
+                original_text = unfix_strings(decode(cypher, key), mistakes, newlines);
                 write_file(argmap["-o"], original_text);
                 cout << "Successfuly decoded file \"" << argmap["-i"] << "\"!";
             }
